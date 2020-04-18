@@ -13,9 +13,7 @@ addEventListener('fetch', event => {
   event.respondWith(handleRequest(event.request))
 })
 
-/*
-	Custom class responsible for setting the content of the element to handle.
-*/
+// Custom class responsible for setting the content of the element to handle.
 class ElementHandler {
 	constructor(elem) {
 		this.elem = elem
@@ -26,9 +24,8 @@ class ElementHandler {
 	}
 }
 
-/**
-	Custom class responsible for replacing website links for the CTA buttons
-*/
+
+// Custom class responsible for replacing website links for the CTA buttons
 class AttrRewriter {
 	constructor(attr) {
     	this.attrName = attr;
@@ -46,24 +43,23 @@ class AttrRewriter {
 }
 
 async function handleRequest(request) {
-	// Direct to site and grab JSON
 	let urlReq = await fetch('https://cfw-takehome.developers.workers.dev/api/variants')
 	.then((response) => {
 		return response.json();
 	})
-	let urlArray = urlReq["variants"];
-	
-	let variant;
+	let variants = urlReq["variants"];
+	let selectedVariant;
 	let cookies = request.headers.get("Cookie") || "";
+
 	if (cookies.includes("variant=0")) {
-		variant = 0;
+		selectedVariant = 0;
 	} else if (cookies.includes("variant=1")) {
-		variant = 1;
+		selectedVariant = 1;
 	} else {
-		variant = Math.round(Math.random());
+		selectedVariant = Math.round(Math.random());
 	}
 	
-	let response = await fetch(urlArray[variant])
+	let response = await fetch(variants[selectedVariant])
 	.then((response) => {
 		return response;
 	})
