@@ -24,6 +24,10 @@ class ElementHandler {
 	}
 }
 
+// Helper function to choose a random int
+function getRandomInt(max) {
+  return Math.floor(Math.random() * max);
+}
 
 // Custom class responsible for replacing website links for the CTA buttons
 class AttrRewriter {
@@ -51,12 +55,13 @@ async function handleRequest(request) {
 	let selectedVariant;
 	let cookies = request.headers.get("Cookie") || "";
 
+	// conditional statement to persist variants so that the user always sees the same variant when they return to the application
 	if (cookies.includes("variant=0")) {
 		selectedVariant = 0;
 	} else if (cookies.includes("variant=1")) {
 		selectedVariant = 1;
 	} else {
-		selectedVariant = Math.round(Math.random());
+		selectedVariant = getRandomInt(2);
 	}
 	
 	let response = await fetch(variants[selectedVariant])
@@ -66,7 +71,7 @@ async function handleRequest(request) {
 
 
 	// Display HTML in A/B fashion, depending on variant 
-	if (variant == 0) { 
+	if (selectedVariant == 0) { 
 		response = new HTMLRewriter().on('title', new ElementHandler('Ashley Teow')).transform(response);
 		response = new HTMLRewriter().on('h1#title', new ElementHandler('Variant 1')).transform(response);
 		response = new HTMLRewriter().on('p#description', new ElementHandler('This is a variant 1 response')).transform(response);
