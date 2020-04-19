@@ -50,12 +50,14 @@ async function handleRequest(request) {
 	let urlReq = await fetch('https://cfw-takehome.developers.workers.dev/api/variants')
 	.then((response) => {
 		return response.json();
-	})
+	});
+
+	// store the result in a variable
 	let variants = urlReq["variants"];
 	let selectedVariant;
 	let cookies = request.headers.get("Cookie") || "";
 
-	// conditional statement to persist variants so that the user always sees the same variant when they return to the application
+	// persist variants so that the user always sees the same variant when they return to the application
 	if (cookies.includes("variant=0")) {
 		selectedVariant = 0;
 	} else if (cookies.includes("variant=1")) {
@@ -64,6 +66,7 @@ async function handleRequest(request) {
 		selectedVariant = getRandomInt(2);
 	}
 	
+	// 
 	let response = await fetch(variants[selectedVariant])
 	.then((response) => {
 		return response;
@@ -72,17 +75,17 @@ async function handleRequest(request) {
 
 	// Display HTML in A/B fashion, depending on variant 
 	if (selectedVariant == 0) { 
-		response = new HTMLRewriter().on('title', new ElementHandler('Ashley Teow')).transform(response);
-		response = new HTMLRewriter().on('h1#title', new ElementHandler('Variant 1')).transform(response);
-		response = new HTMLRewriter().on('p#description', new ElementHandler('This is a variant 1 response')).transform(response);
+		response = new HTMLRewriter().on('title', new ElementHandler('Cloudflare Worker Challenge')).transform(response);
+		response = new HTMLRewriter().on('h1#title', new ElementHandler('Welcome to Result 1!')).transform(response);
+		response = new HTMLRewriter().on('p#description', new ElementHandler('Hello! My name is Ashley Teow. I am a new graduate with a Marketing and Computer Science background from Northeastern University, in Boston, MA. You are currently viewing one of two results of this webpage that was created for the coding challenge for the full-stack internship at Cloudflare.')).transform(response);
 		response = new HTMLRewriter().on('a#url', new ElementHandler('Connect with me on Linkedin!')).transform(response);
 		response = new HTMLRewriter().on('a', new AttrRewriter('href')).transform(response);
 		response.headers.set("Set-Cookie", "variant=0");
 	} else { 
-		response = new HTMLRewriter().on('title', new ElementHandler('Ashley Teow')).transform(response);
-		response = new HTMLRewriter().on('h1#title', new ElementHandler('Variant 2')).transform(response);
-		response = new HTMLRewriter().on('p#description', new ElementHandler('This is a variant 2 response')).transform(response);
-		response = new HTMLRewriter().on('a#url', new ElementHandler('Are you interested?')).transform(response);
+		response = new HTMLRewriter().on('title', new ElementHandler('Cloudflare Worker Challenge')).transform(response);
+		response = new HTMLRewriter().on('h1#title', new ElementHandler('Welcome to Result 2!')).transform(response);
+		response = new HTMLRewriter().on('p#description', new ElementHandler('Hello! My name is Ashley Teow. I am a new graduate with a Marketing and Computer Science background from Northeastern University, in Boston, MA. You are currently viewing one of two results of this webpage that was created for the coding challenge for the full-stack internship at Cloudflare.')).transform(response);
+		response = new HTMLRewriter().on('a#url', new ElementHandler("Are you interested? Let's connect!")).transform(response);
 		response = new HTMLRewriter().on('a', new AttrRewriter('href')).transform(response);
 		response.headers.set("Set-Cookie", "variant=1");
 	}
