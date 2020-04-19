@@ -66,7 +66,6 @@ async function handleRequest(request) {
 		selectedVariant = getRandomInt(2);
 	}
 	
-	// 
 	let response = await fetch(variants[selectedVariant])
 	.then((response) => {
 		return response;
